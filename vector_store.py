@@ -21,19 +21,19 @@ if not openai_api_key:
 #embeddings
 embeddings = OpenAIEmbeddings(model="text-embedding-3-large", api_key=openai_api_key)
 
-# Load and process documents (put in text file and read as a string)
-loader = WebBaseLoader(
-    web_paths=("https://www.morgan.edu/computer-science/faculty-and-staff","https://www.morgan.edu/computer-science/faculty-and-staff/shuangbao-wang","https://www.morgan.edu/computer-science/faculty-and-staff/md-rahman","https://www.morgan.edu/computer-science/faculty-and-staff/amjad-ali","https://www.morgan.edu/computer-science/faculty-and-staff/radhouane-chouchane","https://www.morgan.edu/computer-science/faculty-and-staff/monireh-dabaghchian","https://www.morgan.edu/computer-science/faculty-and-staff/jamell-dacon","https://www.morgan.edu/computer-science/faculty-and-staff/naja-mack","https://www.morgan.edu/computer-science/degrees-and-programs","https://www.morgan.edu/computer-science/admission-and-application"),
-    bs_kwargs=dict( 
-        parse_only=bs4.SoupStrainer(
-            class_=("profile-box","body-copy","copy"),
-        )
-    ),
-)
-docs = loader.load()
+# #Load &process documents (put in text file and read as a string)
+# loader = WebBaseLoader(
+#     web_paths=("https://www.morgan.edu/computer-science/faculty-and-staff","https://www.morgan.edu/computer-science/faculty-and-staff/shuangbao-wang","https://www.morgan.edu/computer-science/faculty-and-staff/md-rahman","https://www.morgan.edu/computer-science/faculty-and-staff/amjad-ali","https://www.morgan.edu/computer-science/faculty-and-staff/radhouane-chouchane","https://www.morgan.edu/computer-science/faculty-and-staff/monireh-dabaghchian","https://www.morgan.edu/computer-science/faculty-and-staff/jamell-dacon","https://www.morgan.edu/computer-science/faculty-and-staff/naja-mack","https://www.morgan.edu/computer-science/degrees-and-programs","https://www.morgan.edu/computer-science/admission-and-application"),
+#     bs_kwargs=dict( 
+#         parse_only=bs4.SoupStrainer(
+#             class_=("profile-box","body-copy","copy"),
+#         )
+#     ),
+# )
+# docs = loader.load()
 
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=201)
-all_splits = text_splitter.split_documents(docs)
+# text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=201)
+# all_splits = text_splitter.split_documents(docs)
 
 # Set up vector store
 connection = "postgresql+psycopg://langchain:langchain@localhost:6024/langchain"
@@ -47,4 +47,4 @@ vector_store = PGVector(
 )
 
 # Index chunks
-vector_store.add_documents(documents=all_splits)
+# vector_store.add_documents(documents=all_splits)

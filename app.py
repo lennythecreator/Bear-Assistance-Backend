@@ -40,6 +40,7 @@ def connect_to_db():
         print(f"DB connection failed: {e}")
         return None
 
+store =[]
 @app.route("/ask", methods=["POST"])
 def ask_question():
     try:
@@ -48,15 +49,16 @@ def ask_question():
         if not question:
             return jsonify({"error": "No question asked"})
         
-        response = chat.graph.invoke({"question": question})
+        response = chat.graph.invoke({"question": ", ".join(store)+ " " + question})
         answer = response["answer"]
+        #store.append(f"question: {question}, response: {answer}")
         # Convert the answer to speech
-        audio = client.text_to_speech.convert_as_stream(
-            text=answer,
-            voice_id="onwK4e9ZLuTAKqWW03F9",
-            model_id="eleven_multilingual_v2",
-            output_format="mp3_44100_128",
-        )
+        # audio = client.text_to_speech.convert_as_stream(
+        #     text=answer,
+        #     voice_id="onwK4e9ZLuTAKqWW03F9",
+        #     model_id="eleven_multilingual_v2",
+        #     output_format="mp3_44100_128",
+        # )
         
         return jsonify({"answer": response["answer"]})
         
@@ -72,7 +74,8 @@ def get_login_information():
     return jsonify({'status': 'success', 'message': f'login info received for {email} and for {password}'})
 
 
-
+import logging
+logging.basicConfig(level=logging.DEBUG)
 @app.route('/uploadTranscripts', methods=['POST'] )
 def upload_file():
     if 'file' not in request.files:
@@ -94,10 +97,11 @@ def upload_file():
     try:
         cursor = connection.cursor()
         # Insert the file URL into the transcripts table
-        cursor.execute("INSERT INTO transcripts (file_url) VALUES (%s)", (file_url,))
+        cursor.execute("INSERT INTO public.transcripts (file_url) VALUES (%s)", (file_url,))
         connection.commit()
         cursor.close()
     except Exception as e:
+        logging.error(f"Error inserting into database: {e}")
         return {"error": f"error inserting {safe_filename} into database"}, 500
     finally:
         connection.close()
